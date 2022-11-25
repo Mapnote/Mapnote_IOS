@@ -22,10 +22,10 @@ import 'package:naver_map_plugin/naver_map_plugin.dart';
 
 class NewMapnotePage extends StatefulWidget {
   @override
-  _NewMapnotePage createState() => _NewMapnotePage();
+  _NewMapnotePageState createState() => _NewMapnotePageState();
 }
 
-class _NewMapnotePage extends State<NewMapnotePage> {
+class _NewMapnotePageState extends State<NewMapnotePage> {
   final double _initFabHeight = 120.0;
   double _fabHeight = 0;
   double _panelHeightOpen = 0;
