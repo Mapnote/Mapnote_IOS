@@ -20,12 +20,12 @@ import 'package:naver_map_plugin/naver_map_plugin.dart';
 // import 'package:latlong/latlong.dart';
 // import 'package:cached_network_image/cached_network_image.dart';
 
-class HomePage extends StatefulWidget {
+class NewMapnotePage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _NewMapnotePage createState() => _NewMapnotePage();
 }
 
-class _HomePageState extends State<HomePage> {
+class _NewMapnotePage extends State<NewMapnotePage> {
   final double _initFabHeight = 120.0;
   double _fabHeight = 0;
   double _panelHeightOpen = 0;
@@ -219,3 +219,4 @@ class _HomePageState extends State<HomePage> {
     _controller.complete(controller);
   }
 }
+
