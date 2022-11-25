@@ -11,7 +11,7 @@ class FindUserInfo extends StatefulWidget {
 }
 
 class _FindUserInfoState extends State<FindUserInfo> {
-  var isCompleted = false;
+  var isCompleted = true;
 
   @override
   Widget build(BuildContext context) {

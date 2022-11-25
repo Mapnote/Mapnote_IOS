@@ -55,7 +55,7 @@ class _Settings extends State<Settings> {
                     ),
                     SizedBox(width: 14),
                     Text(
-                      'USER_NAME',
+                      '홍길동',
                       style: TextStyle(
                         fontFamily: "NotoSansKR",
                         color: Colors.black,

@@ -25,7 +25,7 @@ class _JoinComplete extends State<JoinComplete> {
                 ),
                 SizedBox(height: 40.0),
                 Text(
-                  'Name 님, 환영합니다!\n이제 Mapnote를\n이용하실 수 있습니다.',
+                  '홍길동 님, 환영합니다!\n이제 Mapnote를\n이용하실 수 있습니다.',
                   style: TextStyle(
                     fontFamily: "NotoSansKR",
                     color: Colors.black,
