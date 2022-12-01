@@ -58,7 +58,8 @@ class _JoinState extends State<Join> {
           headers: {"Content-Type": "application/json"},
           encoding: Encoding.getByName("utf-8"));
 
-      if (data.statusCode == 200) {
+
+      if (data.statusCode == 200 || data.statusCode == 201) {
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (_) => JoinComplete(_nameController.text))
         );
