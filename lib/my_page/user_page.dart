@@ -4,29 +4,41 @@ import 'package:flutter/material.dart';
 import 'package:map_note/my_page/working_mapnote.dart';
 import 'package:map_note/my_page/finished_mapnote.dart';
 
+import 'package:map_note/my_page/notice.dart';
+import 'package:map_note/my_page/settings.dart';
+
 class UserPage extends StatefulWidget {
   @override
   _UserPageState createState() => _UserPageState();
 }
+
 class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+      initialIndex: 0,
       length: 2,
       child: Scaffold(
           appBar: AppBar(
-              title: Text(''),
               backgroundColor: Colors.white,
               actions: <Widget>[
                 IconButton(
                   icon: const Icon(CupertinoIcons.bell_fill),
                   color: Color.fromRGBO(204, 204, 204, 1),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (_) => Notice())
+                    );
+                  },
                 ),
                 IconButton(
                   icon: const Icon(CupertinoIcons.gear_solid),
                   color: Color.fromRGBO(204, 204, 204, 1),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (_) => Settings())
+                    );
+                  },
                 ),
               ],
               bottom: TabBar(
@@ -54,6 +66,7 @@ class _UserPageState extends State<UserPage> {
                     ),
                   ])
           ),
+
           body: TabBarView(
               children: <Widget>[WorkingMapnote(), FinishedMapnote()]
           )

@@ -1,11 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:map_note/model/notice.dart';
+
 class Notice extends StatefulWidget {
   @override
-  _Notice createState() => _Notice();
+  _NoticeState createState() => _NoticeState();
 }
-class _Notice extends State<Notice> {
+class _NoticeState extends State<Notice> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchData();
+  }
+
+  void fetchData() {
+    // TODO: notice 불러오는 api 호출하기(아이콘 이미지, 장소, 내용, 날짜)
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
