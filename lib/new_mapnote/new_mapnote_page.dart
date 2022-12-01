@@ -1,16 +1,9 @@
-/*
-Name: Akshath Jain
-Date: 3/18/2019 - 4/26/2021
-Purpose: Example app that implements the package: sliding_up_panel
-Copyright: © 2021, Akshath Jain. All rights reserved.
-Licensing: More information can be found here: https://github.com/akshathjain/sliding_up_panel/blob/master/LICENSE
-*/
-
 import 'dart:ui';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:map_note/new_mapnote/address.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter/services.dart';
 
@@ -164,7 +157,11 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
                 ),
                 SizedBox(width: 226),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (_) => TempAddress())
+                    );
+                  },
                   icon: Icon(CupertinoIcons.arrow_right),
                   color: Colors.black,
                 ),
