@@ -2,18 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import './login/login_page.dart';
-import './login/find_user_info.dart';
-import './login/find_id.dart';
-import './login/join_page.dart';
-import './login/join.dart';
-import './login/join_complete.dart';
-import './my_page/working_mapnote.dart';
-import './my_page/user_page.dart';
-import './my_page/notice.dart';
-import './my_page/settings.dart';
-import './instance.dart';
-
-import './new_mapnote/new_mapnote_page.dart';
 
 void main() {
   runApp(MapNote());
@@ -27,7 +15,7 @@ class MapNote extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: LoginPage(),
     );
   }
 }
