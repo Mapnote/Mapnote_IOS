@@ -1,11 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class JoinPage extends StatefulWidget {
-  @override
-  _JoinPage createState() => _JoinPage();
-}
-class _JoinPage extends State<JoinPage> {
+import 'package:map_note/login/join.dart';
+
+class JoinPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +18,7 @@ class _JoinPage extends State<JoinPage> {
           color: Color.fromRGBO(136, 136, 136, 1),
 
         ),
-        shadowColor: Colors.white,
+        shadowColor: Colors.transparent,
       ),
       body: SafeArea(
         child: ListView(
@@ -97,7 +95,11 @@ class _JoinPage extends State<JoinPage> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => Join())
+                  );
+                },
               ),
             ),
 

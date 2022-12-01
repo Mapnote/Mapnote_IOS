@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class FindIdComplete extends StatefulWidget {
-  @override
-  _FindIdCompleteState createState() => _FindIdCompleteState();
-}
+import '../login/login_page.dart';
 
-class _FindIdCompleteState extends State<FindIdComplete> {
+class FindIdComplete extends StatelessWidget {
+  final String email;
+
+  const FindIdComplete(this.email);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +19,7 @@ class _FindIdCompleteState extends State<FindIdComplete> {
             Column(
               children: <Widget>[
                 Text(
-                  'dummy@email.com',
+                  email,
                   style: TextStyle(
                     fontFamily: "NotoSansKR",
                     color: Colors.black,
@@ -78,7 +79,11 @@ class _FindIdCompleteState extends State<FindIdComplete> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => LoginPage())
+                  );
+                },
               ),
             ),
           ],
