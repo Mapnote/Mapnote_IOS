@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kopo/kopo.dart';
 import 'dart:ui';
 
 class Address extends StatefulWidget {
