@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:map_note/login/join_complete.dart';
+
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Join extends StatefulWidget {
   @override
@@ -8,8 +12,62 @@ class Join extends StatefulWidget {
 
 class _JoinState extends State<Join> {
 
-  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _codeController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  bool isEmailVerified = false;
+  bool isCodeVerified = false;
+
+  void verifyEmail() async {
+    var url = 'http://api.mapnote.link:8080/api/v1/users/email';
+    var body = {
+      "email": _emailController.text,
+    };
+
+    var data = await http.post(Uri.parse(url),
+        body: json.encode(body),
+        headers: {"Content-Type": "application/json"},
+        encoding: Encoding.getByName("utf-8"));
+
+    if (data.statusCode == 200) {
+      isEmailVerified = true;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  void verifyCode() {
+    // TODO: 인증코드 확 기능 구현하기
+    isCodeVerified = true;
+  }
+
+  void SignUp() async {
+    if(isCodeVerified && isEmailVerified) {
+      var url = 'http://api.mapnote.link:8080/api/v1/users';
+      var body = {
+        "email": _emailController.text,
+        "password": _passwordController.text,
+        "name": _nameController.text,
+      };
+
+      var data = await http.post(Uri.parse(url),
+          body: json.encode(body),
+          headers: {"Content-Type": "application/json"},
+          encoding: Encoding.getByName("utf-8"));
+
+      if (data.statusCode == 200) {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => JoinComplete(_nameController.text))
+        );
+      } else {
+        throw Exception('Failed to load data');
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +113,7 @@ class _JoinState extends State<Join> {
                 Flexible(
                   fit: FlexFit.tight,
                   child: TextField(
-                    controller: _passwordController,
+                    controller: _emailController,
                     decoration: InputDecoration(
                       filled: true,
                       enabledBorder: UnderlineInputBorder(
@@ -95,7 +153,7 @@ class _JoinState extends State<Join> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () => verifyEmail(),
                   ),
                 ),
               ],
@@ -118,7 +176,7 @@ class _JoinState extends State<Join> {
                 Flexible(
                   fit: FlexFit.tight,
                   child: TextField(
-                    controller: _passwordController,
+                    controller: _codeController,
                     decoration: InputDecoration(
                       filled: true,
                       enabledBorder: UnderlineInputBorder(
@@ -158,7 +216,7 @@ class _JoinState extends State<Join> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () => verifyCode(),
                   ),
                 ),
               ],
@@ -177,7 +235,7 @@ class _JoinState extends State<Join> {
             ),
 
             TextField(
-              controller: _usernameController,
+              controller: _nameController,
               decoration: InputDecoration(
                 filled: true,
                 enabledBorder: UnderlineInputBorder(
@@ -209,7 +267,7 @@ class _JoinState extends State<Join> {
             ),
 
             TextField(
-              controller: _usernameController,
+              controller: _passwordController,
               decoration: InputDecoration(
                 filled: true,
                 enabledBorder: UnderlineInputBorder(
@@ -241,7 +299,7 @@ class _JoinState extends State<Join> {
             ),
 
             TextField(
-              controller: _usernameController,
+              controller: _confirmPasswordController,
               decoration: InputDecoration(
                 filled: true,
                 enabledBorder: UnderlineInputBorder(
@@ -281,7 +339,9 @@ class _JoinState extends State<Join> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  SignUp();
+                },
               ),
             ),
           ],

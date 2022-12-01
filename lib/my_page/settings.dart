@@ -1,17 +1,38 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 class Settings extends StatefulWidget {
   @override
   _Settings createState() => _Settings();
 }
 class _Settings extends State<Settings> {
-  bool _value = false;
-  double _counter = 2.0;
+  bool _appAlert = false;
+  double _boundaryValue = 2.0;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  void fetchData() async {
+    // TODO: shared_preference에서 유저 정보 가져오기 (이름, 앱 알림 여부, 범위 설정값)
+  }
 
   onChanged(bool value) {
+    // TODO: 앱 알림 설정 api 호출하기
     setState(() {
-      _value = value;
+      _appAlert = value;
+    });
+  }
+
+  setBoundary(double value){
+    // TODO: 범위 설정 api 호출하기
+    setState(() {
+      _boundaryValue = value;
     });
   }
 
@@ -55,7 +76,7 @@ class _Settings extends State<Settings> {
                     ),
                     SizedBox(width: 14),
                     Text(
-                      'USER_NAME',
+                      '홍길동',
                       style: TextStyle(
                         fontFamily: "NotoSansKR",
                         color: Colors.black,
@@ -80,7 +101,7 @@ class _Settings extends State<Settings> {
                     ),
                     SizedBox(width: 220),
                     CupertinoSwitch(
-                      value: _value,
+                      value: _appAlert,
                       onChanged: onChanged,
                       activeColor: Color.fromRGBO(255, 147, 101, 1),
                     )
@@ -102,16 +123,14 @@ class _Settings extends State<Settings> {
                 SizedBox(height: 10),
 
                 Slider(
-                  value: _counter,
+                  value: _boundaryValue,
                   min: 2,
                   max: 10,
                   divisions: 4,
                   activeColor: Color.fromRGBO(255, 147, 101, 1),
                   inactiveColor: Color.fromRGBO(204, 204, 204, 1),
                   onChanged: (value) {
-                    setState(() {
-                      _counter = value;
-                    });
+                    setBoundary(value);
                   },
                 ),
 

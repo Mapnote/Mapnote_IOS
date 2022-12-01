@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class JoinComplete extends StatefulWidget {
-  @override
-  _JoinComplete createState() => _JoinComplete();
-}
+import '../login/login_page.dart';
 
-class _JoinComplete extends State<JoinComplete> {
+class JoinComplete extends StatelessWidget {
+  final String name;
+
+  const JoinComplete(this.name);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +26,7 @@ class _JoinComplete extends State<JoinComplete> {
                 ),
                 SizedBox(height: 40.0),
                 Text(
-                  'Name 님, 환영합니다!\n이제 Mapnote를\n이용하실 수 있습니다.',
+                  '${name} 님, 환영합니다!\n이제 Mapnote를\n이용하실 수 있습니다.',
                   style: TextStyle(
                     fontFamily: "NotoSansKR",
                     color: Colors.black,
@@ -56,7 +57,11 @@ class _JoinComplete extends State<JoinComplete> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => LoginPage())
+                  );
+                },
               ),
             ),
           ],

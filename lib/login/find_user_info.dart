@@ -2,20 +2,38 @@ import 'package:flutter/material.dart';
 
 import './find_id.dart';
 import './find_pw.dart';
-import './find_pw_complete.dart';
-import './find_id_complete.dart';
 
 class FindUserInfo extends StatefulWidget {
+  final String tabType;
+
+  const FindUserInfo(this.tabType);
+
   @override
   _FindUserInfoState createState() => _FindUserInfoState();
 }
 
 class _FindUserInfoState extends State<FindUserInfo> {
-  var isCompleted = false;
+  var isCompleted = true;
+  String tabType = 'id';
+  int tabIndex = 0;
+
+  @override
+  void initState(){
+    super.initState();
+    setTabType();
+  }
+
+  void setTabType(){
+    if(widget.tabType == 'pw') {
+      this.tabType = 'pw';
+      tabIndex = 1;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+        initialIndex: tabIndex,
         length: 2,
         child: Scaffold(
           appBar: AppBar(
@@ -62,7 +80,7 @@ class _FindUserInfoState extends State<FindUserInfo> {
             ])
           ),
           body: TabBarView(
-            children: <Widget>[isCompleted ? FindId():FindIdComplete(), FindPwComplete()]
+            children: <Widget>[FindId(), FindPw()]
           )
         ),
     );

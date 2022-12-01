@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../login/login_page.dart';
+
 class FindPwComplete extends StatefulWidget {
   @override
   _FindPwCompleteState createState() => _FindPwCompleteState();
@@ -65,7 +67,11 @@ class _FindPwCompleteState extends State<FindPwComplete> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => LoginPage())
+                  );
+                },
               ),
             ),
           ],

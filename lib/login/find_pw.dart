@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../login/find_pw_complete.dart';
+
 class FindPw extends StatefulWidget {
   @override
   _FindPwState createState() => _FindPwState();
@@ -8,8 +10,32 @@ class FindPw extends StatefulWidget {
 
 class _FindPwState extends State<FindPw> {
 
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _codeController = TextEditingController();
+
+  bool isEmailVerified = false;
+  bool isCodeVerified = false;
+
+  void verifyEmail() {
+    // TODO: 이메일 인증 기능 구현하기
+    isEmailVerified = true;
+    print(_emailController.text);
+    print(_emailController.text is String);
+  }
+
+  void verifyCode() {
+    // TODO: 인증코드 확 기능 구현하기
+    isCodeVerified = true;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _codeController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +87,7 @@ class _FindPwState extends State<FindPw> {
             ),
 
             TextField(
-              controller: _usernameController,
+              controller: _nameController,
               decoration: InputDecoration(
                 filled: true,
                 enabledBorder: UnderlineInputBorder(
@@ -97,7 +123,7 @@ class _FindPwState extends State<FindPw> {
                 Flexible(
                   fit: FlexFit.tight,
                   child: TextField(
-                    controller: _passwordController,
+                    controller: _emailController,
                     decoration: InputDecoration(
                       filled: true,
                       enabledBorder: UnderlineInputBorder(
@@ -137,7 +163,7 @@ class _FindPwState extends State<FindPw> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () => verifyEmail(),
                   ),
                 ),
               ],
@@ -160,7 +186,7 @@ class _FindPwState extends State<FindPw> {
                 Flexible(
                   fit: FlexFit.tight,
                   child: TextField(
-                    controller: _passwordController,
+                    controller: _codeController,
                     decoration: InputDecoration(
                       filled: true,
                       enabledBorder: UnderlineInputBorder(
@@ -200,7 +226,7 @@ class _FindPwState extends State<FindPw> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () => verifyCode(),
                   ),
                 ),
               ],
@@ -227,7 +253,11 @@ class _FindPwState extends State<FindPw> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => FindPwComplete())
+                  );
+                },
               ),
             ),
 

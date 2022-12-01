@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:map_note/login/find_id_complete.dart';
 
 class FindId extends StatefulWidget {
   @override
@@ -8,8 +9,32 @@ class FindId extends StatefulWidget {
 
 class _FindIdState extends State<FindId> {
 
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _codeController = TextEditingController();
+
+  bool isEmailVerified = false;
+  bool isCodeVerified = false;
+
+  void verifyEmail() {
+    // TODO: 이메일 인증 기능 구현하기
+    isEmailVerified = true;
+    print(_emailController.text);
+    print(_emailController.text is String);
+  }
+
+  void verifyCode() {
+    // TODO: 인증코드 확 기능 구현하기
+    isCodeVerified = true;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _codeController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +86,7 @@ class _FindIdState extends State<FindId> {
             ),
 
             TextField(
-              controller: _usernameController,
+              controller: _nameController,
               decoration: InputDecoration(
                 filled: true,
                 enabledBorder: UnderlineInputBorder(
@@ -97,7 +122,7 @@ class _FindIdState extends State<FindId> {
                 Flexible(
                   fit: FlexFit.tight,
                   child: TextField(
-                    controller: _passwordController,
+                    controller: _emailController,
                     decoration: InputDecoration(
                       filled: true,
                       enabledBorder: UnderlineInputBorder(
@@ -137,7 +162,7 @@ class _FindIdState extends State<FindId> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () => verifyEmail(),
                   ),
                 ),
               ],
@@ -160,7 +185,7 @@ class _FindIdState extends State<FindId> {
                 Flexible(
                   fit: FlexFit.tight,
                   child: TextField(
-                    controller: _passwordController,
+                    controller: _codeController,
                     decoration: InputDecoration(
                       filled: true,
                       enabledBorder: UnderlineInputBorder(
@@ -200,7 +225,7 @@ class _FindIdState extends State<FindId> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () => verifyCode(),
                   ),
                 ),
               ],
@@ -227,7 +252,11 @@ class _FindIdState extends State<FindId> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => FindIdComplete(_emailController.text))
+                  );
+                },
               ),
             ),
 
