@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:map_note/mapnote_main.dart';
 
 import '../model/search_address.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TempAddress extends StatefulWidget {
   @override
@@ -15,6 +18,14 @@ class _TempAddressState extends State<TempAddress> {
   int addressListLength = 0;
 
   final _addressController = TextEditingController();
+
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //
+  //   resetPrefState();
+  // }
 
   void search() async {
     // 네이버 geocode -> 도로명 주소로만 검색 가능
@@ -36,8 +47,10 @@ class _TempAddressState extends State<TempAddress> {
       for(int i=0; i<addressListLength; i++){
         addressList.add({
           'name': temp['addresses'][i]['roadAddress'],
+          'roadAddress': temp['addresses'][i]['roadAddress'],
           'latitude': temp['addresses'][i]['x'],
           'longtitude': temp['addresses'][i]['y'],
+          'jibunAddress': temp['addresses'][i]['jibunAddress'],
         });
       }
     };
@@ -46,6 +59,32 @@ class _TempAddressState extends State<TempAddress> {
       print(addressList[i]);
     };
   }
+
+  void saveAddress(dynamic address) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    print(address);
+
+    prefs.setString('selectedAddressName', address['name']);
+    prefs.setString('selectedAddressLat', address['latitude']);
+    prefs.setString('selectedAddressLong', address['longtitude']);
+    prefs.setString('selectedRoadAddress', address['roadAddress']);
+    prefs.setString('selectedJibunAddress', address['jibunAddress']);
+
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => MapnoteMain())
+    );
+  }
+
+  // void resetPrefState() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //
+  //   prefs.clear();
+  //
+  //
+  //   print('resetState');
+  //   print(prefs.getKeys());
+  // }
 
 
   @override
@@ -119,7 +158,7 @@ class _TempAddressState extends State<TempAddress> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () => saveAddress(addressList[i]),
                   )
                 ],
               ),

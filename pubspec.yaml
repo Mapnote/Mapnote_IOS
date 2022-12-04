@@ -26,6 +26,7 @@ dependencies:
   sliding_up_panel: ^2.0.0+1
   http: ^0.13.5
   geolocator: ^9.0.2
+  shared_preferences: ^2.0.15
   naver_map_plugin:
     git: https://github.com/LBSTECH/naver_map_plugin.git
 
