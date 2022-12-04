@@ -22,31 +22,26 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
 
   void logIn() async {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => MapnoteMain())
-    );
-  }
+    var url = 'http://api.mapnote.link:8080/api/v1/users/login';
+    var body = {
+      "email": _emailController.text,
+      "password": _passwordController.text,
+    };
 
-  // void logIn() async {
-  //   var url = 'http://api.mapnote.link:8080/api/v1/users/login';
-  //   var body = {
-  //     "email": _emailController.text,
-  //     "password": _passwordController.text,
-  //   };
-  //
-  //   var data = await http.post(Uri.parse(url),
-  //       body: json.encode(body),
-  //       headers: {"Content-Type": "application/json"},
-  //       encoding: Encoding.getByName("utf-8"));
-  //
-  //   if (data.statusCode == 200) {
-  //     Navigator.of(context)
-  //         .push(MaterialPageRoute(builder: (_) => MapnoteMain())
-  //     );
-  //   } else {
-  //     throw Exception('Failed to load data');
-  //   }
-  // }
+    var data = await http.post(Uri.parse(url),
+        body: json.encode(body),
+        headers: {"Content-Type": "application/json"},
+        encoding: Encoding.getByName("utf-8"));
+
+
+    if (data.statusCode == 200 || data.statusCode == 201) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => MapnoteMain())
+      );
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
 
 
   void kakaoLogIn() async {
