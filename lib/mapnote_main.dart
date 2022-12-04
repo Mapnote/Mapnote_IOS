@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:map_note/mapnotes/mapnotes_page.dart';
 
 import 'package:map_note/new_mapnote/new_mapnote_page.dart';
-import 'package:map_note/saved_mapnote/saved_mapnote_page.dart';
+
 import 'package:map_note/my_page/user_page.dart';
 
 
@@ -33,7 +34,7 @@ class _MapnoteMainState extends State<MapnoteMain> {
                 case 0:
                   return NewMapnotePage();
                 case 1:
-                  return SavedMapnotePage();
+                  return MapnotesPage();
                 case 2:
                   return UserPage();
                 default:
