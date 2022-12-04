@@ -1,20 +1,19 @@
-/*
-Name: Akshath Jain
-Date: 3/18/2019 - 4/26/2021
-Purpose: Example app that implements the package: sliding_up_panel
-Copyright: © 2021, Akshath Jain. All rights reserved.
-Licensing: More information can be found here: https://github.com/akshathjain/sliding_up_panel/blob/master/LICENSE
-*/
-
 import 'dart:ui';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:map_note/new_mapnote/address.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter/services.dart';
 
 import 'package:naver_map_plugin/naver_map_plugin.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 // import 'package:flutter_map/flutter_map.dart';
 // import 'package:latlong/latlong.dart';
@@ -26,10 +25,15 @@ class NewMapnotePage extends StatefulWidget {
 }
 
 class _NewMapnotePageState extends State<NewMapnotePage> {
+  final _memoController = TextEditingController();
+
   final double _initFabHeight = 120.0;
-  double _fabHeight = 0;
+  double _fabHeight = 300;
   double _panelHeightOpen = 0;
-  double _panelHeightClosed = 95.0;
+  double _panelHeightClosed = 200.0;
+
+  String location = '어디';
+  String userName;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   Completer<NaverMapController> _controller = Completer();
@@ -40,7 +44,84 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
     super.initState();
 
     _fabHeight = _initFabHeight;
+
+    setData();
   }
+
+  void submitNewMapnote() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var url = 'http://api.mapnote.link:8080/api/v1/schedule';
+
+    var body = {
+      "content": _memoController.text,
+      "category": "LIKE",
+      "address": prefs.get('selectedJibunAddress'),
+      "roadAddress": prefs.get('selectedRoadAddress'),
+      "placeName": prefs.get('selectedAddressName'),
+      "longitude": double.parse(prefs.get('selectedAddressLong')),
+      "latitude": double.parse(prefs.get('selectedAddressLat'))
+    };
+
+    print(body);
+
+    var response = await http.post(Uri.parse(url),
+        body: json.encode(body),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": prefs.getString('accessToken'),
+        },
+        encoding: Encoding.getByName("utf-8"));
+
+    var temp = json.decode(response.body);
+    print(temp);
+    print(response.statusCode);
+  }
+
+  void setData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Future.delayed(Duration(milliseconds: 200), () {
+      setState(() {
+        userName = prefs.getString('userName');
+        location = '어디서';
+
+        if(prefs.getKeys().isNotEmpty) {
+          location = prefs.getString('selectedAddressName');
+        }
+      });
+    });
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+    var data = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    print(data);
+
+    return data;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +133,7 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
         alignment: Alignment.topCenter,
         children: <Widget>[
           SlidingUpPanel(
-            maxHeight: 317,
+            maxHeight: 350,
             minHeight: _panelHeightClosed,
             parallaxEnabled: true,
             parallaxOffset: .5,
@@ -76,7 +157,7 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
                 Icons.gps_fixed,
                 color: Theme.of(context).primaryColor,
               ),
-              onPressed: () {},
+              onPressed: () => _determinePosition(),
               backgroundColor: Colors.white,
             ),
           ),
@@ -100,9 +181,6 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
   }
 
   Widget _panel(ScrollController sc) {
-
-    final _usernameController = TextEditingController();
-    final _passwordController = TextEditingController();
 
     return MediaQuery.removePadding(
         context: context,
@@ -135,7 +213,7 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
                   width: 24.0,
                 ),
                 Text(
-                  "홍길동님 할 일을 기록하세요",
+                  "${userName}님 할 일을 기록하세요",
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontFamily: "NotoSansKR",
@@ -153,18 +231,24 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
             Row(
               children: <Widget>[
                 SizedBox(width: 44),
-                Text(
-                  '어디서',
-                  style: TextStyle(
-                    fontFamily: "NotoSansKR",
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                Flexible(
+                  fit: FlexFit.tight,
+                  child:Text(
+                    '${location}',
+                    style: TextStyle(
+                      fontFamily: "NotoSansKR",
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-                SizedBox(width: 226),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (_) => TempAddress())
+                    );
+                  },
                   icon: Icon(CupertinoIcons.arrow_right),
                   color: Colors.black,
                 ),
@@ -182,25 +266,31 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
                   color: Color.fromRGBO(136, 136, 136, 1),
                 ),
                 SizedBox(width: 10),
-                Text(
-                  '무엇을',
-                  style: TextStyle(
-                    fontFamily: "NotoSansKR",
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: TextField(
+                    controller: _memoController,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      filled: true,
+                      hintText: '무엇을',
+                      hintStyle: TextStyle(
+                        fontFamily: "NotoSansKR",
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                 ),
-                SizedBox(width: 190),
-
+                // SizedBox(width: 180),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () => submitNewMapnote(),
                   icon: Icon(CupertinoIcons.checkmark_alt),
                   color: Colors.black,
                 ),
               ],
             ),
-
             SizedBox(
               height: 24,
             ),
