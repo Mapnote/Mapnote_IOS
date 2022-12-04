@@ -7,6 +7,12 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter/services.dart';
 
 import 'package:naver_map_plugin/naver_map_plugin.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 // import 'package:flutter_map/flutter_map.dart';
 // import 'package:latlong/latlong.dart';
@@ -14,14 +20,17 @@ import 'package:naver_map_plugin/naver_map_plugin.dart';
 
 class MapnotesPage extends StatefulWidget {
   @override
-  _MapnotesPage createState() => _MapnotesPage();
+  _MapnotesPageState createState() => _MapnotesPageState();
 }
 
-class _MapnotesPage extends State<MapnotesPage> {
+class _MapnotesPageState extends State<MapnotesPage> {
+
+  Marker marker = new Marker(markerId: 'first', position: LatLng(33.5178257, 126.8621147));
+
   final double _initFabHeight = 120.0;
-  double _fabHeight = 0;
+  double _fabHeight = 300;
   double _panelHeightOpen = 0;
-  double _panelHeightClosed = 95.0;
+  double _panelHeightClosed = 200.0;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   Completer<NaverMapController> _controller = Completer();
@@ -34,6 +43,37 @@ class _MapnotesPage extends State<MapnotesPage> {
     _fabHeight = _initFabHeight;
   }
 
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+    var data = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    print(data);
+
+    return data;
+  }
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -44,7 +84,7 @@ class _MapnotesPage extends State<MapnotesPage> {
         alignment: Alignment.topCenter,
         children: <Widget>[
           SlidingUpPanel(
-            maxHeight: _panelHeightOpen,
+            maxHeight: 350,
             minHeight: _panelHeightClosed,
             parallaxEnabled: true,
             parallaxOffset: .5,
@@ -68,7 +108,7 @@ class _MapnotesPage extends State<MapnotesPage> {
                 Icons.gps_fixed,
                 color: Theme.of(context).primaryColor,
               ),
-              onPressed: () {},
+              onPressed: () => _determinePosition(),
               backgroundColor: Colors.white,
             ),
           ),
@@ -92,9 +132,6 @@ class _MapnotesPage extends State<MapnotesPage> {
   }
 
   Widget _panel(ScrollController sc) {
-
-    final _usernameController = TextEditingController();
-    final _passwordController = TextEditingController();
 
     return MediaQuery.removePadding(
         context: context,
@@ -139,15 +176,15 @@ class _MapnotesPage extends State<MapnotesPage> {
               ],
             ),
             SizedBox(
-              height: 49.0,
+              height: 55.0,
             ),
 
             Row(
               children: <Widget> [
-                SizedBox(width: 32),
+                SizedBox(width: 20),
                 Icon(
-                    CupertinoIcons.smallcircle_fill_circle_fill,
-                    color: Colors.orange,
+                    CupertinoIcons.star_circle_fill,
+                    color: Color.fromRGBO(255, 242, 122, 1),
                     size: 40
                 ),
                 SizedBox(width: 14),
@@ -155,7 +192,7 @@ class _MapnotesPage extends State<MapnotesPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget> [
                     Text(
-                      '이마트24 수지첼시빌점',
+                      '제주시 구좌읍 세화리 62',
                       style: TextStyle(
                         fontFamily: "NotoSansKR",
                         color: Color.fromRGBO(136, 136, 136, 1),
@@ -165,7 +202,7 @@ class _MapnotesPage extends State<MapnotesPage> {
                     ),
                     SizedBox(height: 1),
                     Text(
-                      '택배 보내기',
+                      '커피 마시기',
                       style: TextStyle(
                         fontFamily: "NotoSansKR",
                         color: Colors.black,
@@ -177,17 +214,20 @@ class _MapnotesPage extends State<MapnotesPage> {
                 )
               ],
             ),
-
-            SizedBox(
-              height: 24,
-            ),
           ],
         ));
   }
 
   Widget _body() {
     return NaverMap(
+      initialCameraPosition: CameraPosition(
+        target: LatLng(33.5178257, 126.8621147),
+        zoom:15,
+      ),
       onMapCreated: _onMapCreated,
+      markers: [
+        marker
+      ],
     );
   }
 

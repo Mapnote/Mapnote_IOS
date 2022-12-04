@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -12,6 +13,9 @@ class _Settings extends State<Settings> {
   bool _appAlert = false;
   double _boundaryValue = 2.0;
 
+  String userName;
+
+
   @override
   void initState() {
     super.initState();
@@ -19,7 +23,13 @@ class _Settings extends State<Settings> {
   }
 
   void fetchData() async {
-    // TODO: shared_preference에서 유저 정보 가져오기 (이름, 앱 알림 여부, 범위 설정값)
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Future.delayed(Duration(milliseconds: 200), () {
+      setState(() {
+        userName = prefs.getString('userName');
+      });
+    });
   }
 
   onChanged(bool value) {
@@ -76,7 +86,7 @@ class _Settings extends State<Settings> {
                     ),
                     SizedBox(width: 14),
                     Text(
-                      '홍길동',
+                      '${userName}',
                       style: TextStyle(
                         fontFamily: "NotoSansKR",
                         color: Colors.black,
