@@ -21,8 +21,8 @@ class _TempAddressState extends State<TempAddress> {
     var url = 'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${_addressController.text}';
     var response = await http.get(Uri.parse(url),
         headers: {
-          "X-NCP-APIGW-API-KEY-ID": "fwu8f8oyrk",
-          "X-NCP-APIGW-API-KEY": "uOIdcD0KYhc9UK7WMLHHoZV8WIQETs3kmKmdeJOC"
+          "X-NCP-APIGW-API-KEY-ID": "NAVER_CLIENT_ID",
+          "X-NCP-APIGW-API-KEY": "SECRET_KEY"
     });
     var temp = json.decode(response.body);
     print(temp['addresses'][0]);
