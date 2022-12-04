@@ -9,6 +9,11 @@ import 'package:flutter/services.dart';
 
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 // import 'package:flutter_map/flutter_map.dart';
 // import 'package:latlong/latlong.dart';
@@ -20,10 +25,15 @@ class NewMapnotePage extends StatefulWidget {
 }
 
 class _NewMapnotePageState extends State<NewMapnotePage> {
+  final _memoController = TextEditingController();
+
   final double _initFabHeight = 120.0;
   double _fabHeight = 300;
   double _panelHeightOpen = 0;
   double _panelHeightClosed = 200.0;
+
+  String location = '어디';
+  String userName;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   Completer<NaverMapController> _controller = Completer();
@@ -34,6 +44,53 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
     super.initState();
 
     _fabHeight = _initFabHeight;
+
+    setData();
+  }
+
+  void submitNewMapnote() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var url = 'http://api.mapnote.link:8080/api/v1/schedule';
+
+    var body = {
+      "content": _memoController.text,
+      "category": "LIKE",
+      "address": prefs.get('selectedJibunAddress'),
+      "roadAddress": prefs.get('selectedRoadAddress'),
+      "placeName": prefs.get('selectedAddressName'),
+      "longitude": double.parse(prefs.get('selectedAddressLong')),
+      "latitude": double.parse(prefs.get('selectedAddressLat'))
+    };
+
+    print(body);
+
+    var response = await http.post(Uri.parse(url),
+        body: json.encode(body),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": prefs.getString('accessToken'),
+        },
+        encoding: Encoding.getByName("utf-8"));
+
+    var temp = json.decode(response.body);
+    print(temp);
+    print(response.statusCode);
+  }
+
+  void setData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Future.delayed(Duration(milliseconds: 200), () {
+      setState(() {
+        userName = prefs.getString('userName');
+        location = '어디서';
+
+        if(prefs.getKeys().isNotEmpty) {
+          location = prefs.getString('selectedAddressName');
+        }
+      });
+    });
   }
 
   Future<Position> _determinePosition() async {
@@ -125,9 +182,6 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
 
   Widget _panel(ScrollController sc) {
 
-    final _usernameController = TextEditingController();
-    final _passwordController = TextEditingController();
-
     return MediaQuery.removePadding(
         context: context,
         removeTop: true,
@@ -159,7 +213,7 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
                   width: 24.0,
                 ),
                 Text(
-                  "홍길동님 할 일을 기록하세요",
+                  "${userName}님 할 일을 기록하세요",
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontFamily: "NotoSansKR",
@@ -177,16 +231,18 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
             Row(
               children: <Widget>[
                 SizedBox(width: 44),
-                Text(
-                  '어디서',
-                  style: TextStyle(
-                    fontFamily: "NotoSansKR",
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                Flexible(
+                  fit: FlexFit.tight,
+                  child:Text(
+                    '${location}',
+                    style: TextStyle(
+                      fontFamily: "NotoSansKR",
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-                SizedBox(width: 226),
                 IconButton(
                   onPressed: () {
                     Navigator.of(context)
@@ -210,25 +266,31 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
                   color: Color.fromRGBO(136, 136, 136, 1),
                 ),
                 SizedBox(width: 10),
-                Text(
-                  '무엇을',
-                  style: TextStyle(
-                    fontFamily: "NotoSansKR",
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: TextField(
+                    controller: _memoController,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      filled: true,
+                      hintText: '무엇을',
+                      hintStyle: TextStyle(
+                        fontFamily: "NotoSansKR",
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                 ),
-                SizedBox(width: 190),
-
+                // SizedBox(width: 180),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () => submitNewMapnote(),
                   icon: Icon(CupertinoIcons.checkmark_alt),
                   color: Colors.black,
                 ),
               ],
             ),
-
             SizedBox(
               height: 24,
             ),
