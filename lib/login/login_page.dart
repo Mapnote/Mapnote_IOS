@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +10,8 @@ import '../mapnote_main.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 // import '../components/main_button.dart';
 
@@ -22,19 +26,66 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
 
   void logIn() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.clear();
+
     var url = 'http://api.mapnote.link:8080/api/v1/users/login';
     var body = {
       "email": _emailController.text,
       "password": _passwordController.text,
     };
 
-    var data = await http.post(Uri.parse(url),
+    var response = await http.post(Uri.parse(url),
         body: json.encode(body),
         headers: {"Content-Type": "application/json"},
         encoding: Encoding.getByName("utf-8"));
 
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      var data = json.decode(response.body);
 
-    if (data.statusCode == 200 || data.statusCode == 201) {
+      print(data);
+
+      prefs.setString('accessToken', data['data']['accessToken']);
+      prefs.setString('refreshToken', data['data']['refreshToken']);
+
+      while(true) {
+        var user_response = await http.get(Uri.parse('http://api.mapnote.link:8080/api/v1/users'),
+          headers: {
+            "Authorization": prefs.getString('accessToken'),
+          },
+        );
+
+        if (user_response.statusCode == 200 || user_response.statusCode == 201) {
+          var userData = jsonDecode(utf8.decode(user_response.bodyBytes));
+
+          prefs.setString('userName', userData['data']['name']);
+          prefs.setDouble('boundary', userData['data']['boundary']);
+
+          break;
+        } else if(user_response.statusCode == 401) {
+
+          var token_body = {
+            "accessToken": data['data']['accessToken'],
+            "refreshToken": data['data']['refreshToken'],
+          };
+
+          var token_response = await http.post(Uri.parse('http://api.mapnote.link:8080/api/v1/users/reissue'),
+              body: json.encode(token_body),
+              headers: {"Content-Type": "application/json"},
+              encoding: Encoding.getByName("utf-8"));
+
+          var token_data = json.decode(token_response.body);
+
+          prefs.setString('accessToken', token_data['data']['accessToken']);
+          prefs.setString('refreshToken', token_data['data']['refreshToken']);
+
+          continue;
+        } else{
+          throw Exception('Failed to load data');
+        }
+
+      }
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (_) => MapnoteMain())
       );
