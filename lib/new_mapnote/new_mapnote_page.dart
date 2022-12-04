@@ -8,6 +8,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter/services.dart';
 
 import 'package:naver_map_plugin/naver_map_plugin.dart';
+import 'package:geolocator/geolocator.dart';
 
 // import 'package:flutter_map/flutter_map.dart';
 // import 'package:latlong/latlong.dart';
@@ -20,9 +21,9 @@ class NewMapnotePage extends StatefulWidget {
 
 class _NewMapnotePageState extends State<NewMapnotePage> {
   final double _initFabHeight = 120.0;
-  double _fabHeight = 0;
+  double _fabHeight = 300;
   double _panelHeightOpen = 0;
-  double _panelHeightClosed = 95.0;
+  double _panelHeightClosed = 200.0;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   Completer<NaverMapController> _controller = Completer();
@@ -35,6 +36,36 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
     _fabHeight = _initFabHeight;
   }
 
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+    var data = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    print(data);
+
+    return data;
+  }
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -45,7 +76,7 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
         alignment: Alignment.topCenter,
         children: <Widget>[
           SlidingUpPanel(
-            maxHeight: 317,
+            maxHeight: 350,
             minHeight: _panelHeightClosed,
             parallaxEnabled: true,
             parallaxOffset: .5,
@@ -69,7 +100,7 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
                 Icons.gps_fixed,
                 color: Theme.of(context).primaryColor,
               ),
-              onPressed: () {},
+              onPressed: () => _determinePosition(),
               backgroundColor: Colors.white,
             ),
           ),
