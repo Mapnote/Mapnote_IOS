@@ -44,8 +44,6 @@ class _LoginPageState extends State<LoginPage> {
     if (response.statusCode == 200 || response.statusCode == 201) {
       var data = json.decode(response.body);
 
-      print(data);
-
       prefs.setString('accessToken', data['data']['accessToken']);
       prefs.setString('refreshToken', data['data']['refreshToken']);
 
@@ -63,7 +61,8 @@ class _LoginPageState extends State<LoginPage> {
           prefs.setDouble('boundary', userData['data']['boundary']);
 
           break;
-        } else if(user_response.statusCode == 401) {
+        }
+        else if(user_response.statusCode == 401) {
 
           var token_body = {
             "accessToken": data['data']['accessToken'],
@@ -81,7 +80,8 @@ class _LoginPageState extends State<LoginPage> {
           prefs.setString('refreshToken', token_data['data']['refreshToken']);
 
           continue;
-        } else{
+        }
+        else{
           throw Exception('Failed to load data');
         }
 

@@ -17,7 +17,7 @@ class _NoticeState extends State<Notice> {
   }
 
   void fetchData() {
-    // TODO: notice 불러오는 api 호출하기(아이콘 이미지, 장소, 내용, 날짜)
+    // TODO: notice 불러오는 api 호출하기(아이콘 이미지, 장소, 내용, 날짜) -> firebase 연동 예정
   }
 
   @override

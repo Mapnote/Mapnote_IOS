@@ -27,7 +27,11 @@ class _Settings extends State<Settings> {
 
     Future.delayed(Duration(milliseconds: 200), () {
       setState(() {
-        userName = prefs.getString('userName');
+        userName = prefs.get('userName');
+
+        if(prefs.get('boundary')) {
+          _boundaryValue = prefs.get('boundary');
+        }
       });
     });
   }

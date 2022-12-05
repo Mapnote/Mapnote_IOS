@@ -32,7 +32,7 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
   double _panelHeightOpen = 0;
   double _panelHeightClosed = 200.0;
 
-  String location = '어디';
+  String location = '어디서';
   String userName;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -63,8 +63,6 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
       "latitude": double.parse(prefs.get('selectedAddressLat'))
     };
 
-    print(body);
-
     var response = await http.post(Uri.parse(url),
         body: json.encode(body),
         headers: {
@@ -74,8 +72,6 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
         encoding: Encoding.getByName("utf-8"));
 
     var temp = json.decode(response.body);
-    print(temp);
-    print(response.statusCode);
   }
 
   void setData() async {
@@ -117,7 +113,6 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
           'Location permissions are permanently denied, we cannot request permissions.');
     }
     var data = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print(data);
 
     return data;
   }
@@ -149,18 +144,18 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
           ),
 
           // the fab
-          Positioned(
-            right: 20.0,
-            bottom: _fabHeight,
-            child: FloatingActionButton(
-              child: Icon(
-                Icons.gps_fixed,
-                color: Theme.of(context).primaryColor,
-              ),
-              onPressed: () => _determinePosition(),
-              backgroundColor: Colors.white,
-            ),
-          ),
+          // Positioned(
+          //   right: 20.0,
+          //   bottom: _fabHeight,
+          //   child: FloatingActionButton(
+          //     child: Icon(
+          //       Icons.gps_fixed,
+          //       color: Theme.of(context).primaryColor,
+          //     ),
+          //     onPressed: () => _determinePosition(),
+          //     backgroundColor: Colors.white,
+          //   ),
+          // ),
 
           Positioned(
               top: 0,
@@ -300,6 +295,10 @@ class _NewMapnotePageState extends State<NewMapnotePage> {
 
   Widget _body() {
     return NaverMap(
+      initialCameraPosition: CameraPosition(
+        target: LatLng(37.49265, 126.8895972),
+        zoom:17,
+      ),
       onMapCreated: _onMapCreated,
     );
   }

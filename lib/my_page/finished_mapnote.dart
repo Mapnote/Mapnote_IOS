@@ -5,7 +5,9 @@ class FinishedMapnote extends StatefulWidget {
   @override
   _FinishedMapnote createState() => _FinishedMapnote();
 }
+
 class _FinishedMapnote extends State<FinishedMapnote> {
+  // TODO: 완료한 맵노트
   @override
   Widget build(BuildContext context) {
     return Scaffold(

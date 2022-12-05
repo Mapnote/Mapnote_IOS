@@ -32,16 +32,13 @@ class _TempAddressState extends State<TempAddress> {
     var url = 'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${_addressController.text}';
     var response = await http.get(Uri.parse(url),
         headers: {
-          "X-NCP-APIGW-API-KEY-ID": "NAVER_CLIENT_ID",
+          "X-NCP-APIGW-API-KEY-ID": "CLIENT_ID",
           "X-NCP-APIGW-API-KEY": "SECRET_KEY"
     });
     var temp = json.decode(response.body);
-    print(temp['addresses'][0]);
-    print(temp['addresses'][1]);
     setState(() {
       addressListLength = temp['meta']['totalCount'];
     });
-    print(addressListLength);
 
     if(addressListLength != 0) {
       for(int i=0; i<addressListLength; i++){
@@ -62,8 +59,6 @@ class _TempAddressState extends State<TempAddress> {
 
   void saveAddress(dynamic address) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    print(address);
 
     prefs.setString('selectedAddressName', address['name']);
     prefs.setString('selectedAddressLat', address['latitude']);
